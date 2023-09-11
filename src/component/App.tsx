@@ -62,7 +62,7 @@ function App() {
 
                 {
                     status.map((e, i) => (
-                        <Badge color={e.status} badgeContent=" " key={i}>
+                        <Badge color={e.status} badgeContent={e.status === 'success' ? 'good': 'bad'} key={i}>
                             <Card sx={{
                                 width: '100%'
                             }}>
