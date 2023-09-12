@@ -21,9 +21,22 @@ ChartJS.register(
     Legend
 );
 
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+type Month =
+    'January'
+    | 'February'
+    | 'March'
+    | 'April'
+    | 'May'
+    | 'June'
+    | 'July'
+    | 'August'
+    | 'September'
+    | 'October'
+    | 'November'
+    | 'December'
+const months: Month[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const getMonth = (month: number) => {
+const getMonth = (month: number): Month => {
     if (month < 0) {
         return months[12 + month]
     }
@@ -33,17 +46,24 @@ const getMonth = (month: number) => {
 const status: {
     title: string;
     content: string;
-    status: 'success' | 'error'
+    status: 'success' | 'error';
+    errorMonths?: Month[];
 }[] = [
     {
         title: 'Salary Pay Out Status',
-        content: 'August Salary Paid @ 1st September 2023',
+        content: 'August Salary Paid @ 1 September',
         status: 'success',
     },
     {
         title: 'Snacks Status',
-        content: 'Not Yet!',
+        content: 'Snack Arrived @ 12 September',
+        status: 'success',
+    },
+    {
+        title: 'Toilet Status',
+        content: 'Still Broken!',
         status: 'error',
+        errorMonths: ['July', 'August']
     }
 ]
 
@@ -62,7 +82,7 @@ function App() {
 
                 {
                     status.map((e, i) => (
-                        <Badge color={e.status} badgeContent={e.status === 'success' ? 'good': 'bad'} key={i}>
+                        <Badge color={e.status} badgeContent={e.status === 'success' ? 'good' : 'bad'} key={i}>
                             <Card sx={{
                                 width: '100%'
                             }}>
@@ -95,9 +115,12 @@ function App() {
                                         datasets: [
                                             {
                                                 label: e.title,
-                                                data: [...Array.from({length: months.length - 1}).fill(1), e.status === 'success' ? 1 : 0],
-                                                borderColor: 'rgb(58,48,173)',
-                                                backgroundColor: 'rgba(27,0,124,0.89)',
+                                                data: [...Array.from({length: months.length - 1}).map((_, i) => {
+                                                    if (e.errorMonths == null || e.errorMonths.length === 0) return 1
+                                                    return e.errorMonths.includes(getMonth((new Date().getMonth() - months.length + i + 1))) ? 0 : 1
+                                                }), e.status === 'success' ? 1 : 0],
+                                                borderColor: e.status === 'success' ? '#17cb62' : '#ff0000',
+                                                backgroundColor: e.status === 'success' ? '#17cb62' : '#ff0000',
                                             }
                                         ]
                                     }}/>
